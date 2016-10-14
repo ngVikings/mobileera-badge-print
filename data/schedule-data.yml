@@ -1,0 +1,106 @@
+-
+  date: "2016-11-03"
+  dateReadable: "November 3rd"
+  tracks:
+    - {title: "Odin", color: "#90be4e"}
+    - {title: "Freyja", color: "#03a9f4"}
+    - {title: "Thor", color: "#e91e63"}
+  timeslots:
+    - {
+        startTime: "9:00",
+        endTime: "9:45",
+        sessionIds: [1]
+    }
+    - {
+        startTime: "10:00",
+        endTime: "10:45",
+        sessionIds: [2, 102, 119]
+    }
+    - {
+        startTime: "11:00",
+        endTime: "11:45",
+        # IMPORTANT: Vegard (128) must speak on Thursday
+        # Rustam (124) wishes to speak Thursday
+        sessionIds: [108, 124, 133]
+    }
+    - {
+        startTime: "11:45",
+        endTime: "12:45",
+        sessionIds: [998]
+    }
+    - {
+        startTime: "12:45",
+        endTime: "13:30",
+        # Øyvind (130) wishes to speak Thursday
+        sessionIds: [117, 107, 130]
+    }
+    - {
+        startTime: "13:45",
+        endTime: "14:30",
+        sessionIds: [129, 103, 110]
+    }
+    - {
+        startTime: "14:45",
+        endTime: "15:30",
+        # IMPORTANT: Remi (114) must speak Thursday
+        sessionIds: [6, 132, 114]
+    }
+    - {
+        startTime: "15:45",
+        endTime: "16:30",
+        sessionIds: [111, 105, 131]
+    }
+    - {
+        startTime: "18:00",
+        endTime: "23:59",
+        sessionIds: [995]
+    }
+-
+  date: "2016-11-04"
+  dateReadable: "November 4th"
+  tracks:
+    - {title: "Odin", color: "#90be4e"}
+    - {title: "Freyja", color: "#03a9f4"}
+    - {title: "Thor", color: "#e91e63"}
+  timeslots:
+    - {
+        startTime: "9:00",
+        endTime: "9:45",
+        #IMPORTANT: Witalec (112) must speak on Friday
+        sessionIds: [104, 4, 112]
+    }
+    - {
+        startTime: "10:00",
+        endTime: "10:45",
+        sessionIds: [3, 7, 113]
+    }
+    - {
+        startTime: "11:00",
+        endTime: "11:45",
+        sessionIds: [126, 115, 127]
+    }
+    - {
+        startTime: "11:45",
+        endTime: "12:45",
+        sessionIds: [998]
+    }
+    - {
+        startTime: "12:45",
+        endTime: "13:30",
+        sessionIds: [200, 200, 200]
+    }
+    - {
+        startTime: "13:45",
+        endTime: "14:30",
+        sessionIds: [128, 134, 125]
+    }
+    - {
+        startTime: "14:45",
+        endTime: "15:30",
+        sessionIds: [122, 118, 109]
+    }
+    - {
+        startTime: "16:00",
+        endTime: "21:00",
+        sessionIds: [994]
+    }
