@@ -41,7 +41,8 @@ function speakerInfo(participant, speakers, schedules, sessions) {
                title: sessionObj.title,
                date: schedule.dateReadable,
                timeslot: timeslot.startTime,
-               track: schedule.tracks[sessionIndex].title
+               track: schedule.tracks[sessionIndex].title,
+               company: speakerObj.company
             };
          }
       }               
@@ -49,56 +50,117 @@ function speakerInfo(participant, speakers, schedules, sessions) {
    return null;
 }
 
+var COMPANIES = {
+   "@agens.no": "Agens",
+   "@knowit.no": "KnowIT",
+   "@bekk.no": "BEKK",
+   "@kantega.no": "Kantega",
+   "@soprasteria.com": "Sopra Steria",
+   "@giantleap.no": "Giant Leap Technologies AS",
+   "@hu.ibm.com": "Ustream",
+   "@netlight.com": "Netlight",
+   "@bouvet.no": "Bouvet",
+   "@mesan.no": "Mesan", 
+   "@systek.no": "Systek",
+   "@apps.no": "Apps",
+   "@webstep.no": "Webstep"
+}
+
+function companyName(participant) {
+   var email = participant["Epost"];
+   var domain = email.replace(/.*@/, "@");
+
+   if (COMPANIES[domain]) {
+      return COMPANIES[domain];
+   }
+
+   if (participant['Company']) {
+      return participant['Company'];
+   }
+
+   return;
+}
+
+
+var IMAGES = {
+   'Normal': 'images/badge-attendee.png',
+   'Speaker': 'images/badge-speaker.png',
+   'Volunteer': 'images/badge-volunteer.png',
+   'Organizer': 'images/badge-organizer.png'
+}
+
+
 function createParticipant(participant, speakers, schedules, sessions) {
    var fullName = participant['Fornavn'] + " " + participant["Etternavn"];
-   var contactCard = fullName + " <" + participant["Epost"] + "> of " + participant['Company'];
+   var company = companyName(participant);
    var sessionInfo = null;
 
    var ticketName = participant['Billettkategori'];
-   var categoryName = ticketName;
-   if (ticketName.indexOf('Blind Bird') === 0) {
-      categoryName = 'Normal';
-   } else if (ticketName.indexOf('Early Bird') === 0) {
-      categoryName = 'Normal';
-   } else if (ticketName.indexOf('Late Bird') === 0) {
-      categoryName = 'Normal';
-   } else if (ticketName.indexOf('Directly invoiced tickets') === 0) {
-      categoryName = 'Normal';
-   } else if (ticketName.indexOf('Free Marketing Ticket') === 0) {
-      categoryName = 'Normal';
-   } else if (ticketName.indexOf('Sponsorship included ticket') === 0) {
-      categoryName = 'Normal';
-   } else if (ticketName.indexOf('ONLY FOR CFP SUBMISSIONS: Early Bird speaker candidate') === 0) {
-      categoryName = 'Normal';
-   } else if (ticketName.indexOf('Mobile Era Speaker') === 0) {
+   var categoryName = "Normal";
+   if (ticketName === "Organizer") {
+      categoryName = "Organizer";
+   } else if (ticketName === "Volunteer") {
+      categoryName = "Volunteer";
+   } else if (ticketName === "Mobile Era Speaker") {
       categoryName = 'Speaker';
       sessionInfo = speakerInfo(participant, speakers, schedules, sessions);
       if (!sessionInfo) {
          console.log("Unknown speaker " + fullName);
+      } else {
+         company = sessionInfo.company;
       }
-   } else {
-      console.log("Unknown category " + categoryName);
    }
-   return { fullName, contactCard, categoryName, sessionInfo };
+
+   var email = participant["Epost"];
+
+   if (!company) {
+      console.log("Could not find company name for", email, categoryName);
+   }
+
+   var image = IMAGES[categoryName];
+   var contactCard = fullName + " <" + email + ">";
+   if (company) {
+      contactCard += " of " + company;
+   }
+   return { fullName, company, contactCard, categoryName, sessionInfo, image };
 }
 
 function printParticipant(doc, participant) {
-   doc
-      .addPage()
-      .image('images/Mobile era oslo 2016 white-01.jpg')
-      .font('fonts/PalatinoBold.ttf')
-      .fontSize(15);
-   doc.text(participant.fullName, 100, 200)
-      .text(participant.categoryName);
+   doc.addPage();
+   var height = doc.page.height;
+   doc.image(participant.image, 0, 0, {height, width:doc.page.width});
+
+   if (!participant.sessionInfo) {
+      var qrWidth = 40;
+      doc.image(
+         qr.imageSync(participant.contactCard, {type: 'png'}), 
+         (doc.page.width-qrWidth)/2, height-80-qrWidth, { width: qrWidth });      
+   }
+
+   var width = doc.page.width-20;
+   var margin = 10;
+   doc.font('fonts/Roboto/Roboto-Bold.ttf')
+      .fontSize(36)
+      .fillColor("#0E1131")
+      .text(participant.fullName, margin, 180, {align: "center", height, width});
+   if (participant.company) {
+      doc.font('fonts/Roboto/Roboto-Regular.ttf')
+         .fontSize(18)
+         .fillColor("#0E1131")
+         .text(participant.company, {align: "center", height, width});         
+   }
    var sessionInfo = participant.sessionInfo;
    if (sessionInfo) {
-      doc.fontSize(10)
-         .text(sessionInfo.title)
-         .text(sessionInfo.date + " " + sessionInfo.timeslot +  " in " + sessionInfo.track);
+      doc.moveDown();
+      var sessionTime = sessionInfo.date + ", " + sessionInfo.timeslot +  ", " + sessionInfo.track;
+      doc.font('fonts/Roboto/Roboto-Medium.ttf')
+         .fontSize(14)
+         .fillColor("#0E1131")
+         .text(sessionInfo.title, {align: "center", height, width});
+      doc.fontSize(12)
+         .fillColor("#6D6E6F")
+         .text(sessionTime, {align: "center", height, width});
    }
-   doc.image(qr.imageSync(participant.contactCard, {type: 'png'}), {
-         width: 60
-      });
 }
 
 
