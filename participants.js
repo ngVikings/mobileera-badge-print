@@ -87,7 +87,7 @@ var IMAGES = {
 
 
 function createParticipant(participant, speakers, schedules, sessions) {
-   var fullName = participant['Fornavn'] + " " + participant["Etternavn"];
+   var fullName = (participant['Fornavn'] + " " + participant["Etternavn"]).replace("  ", " ");
    var company = companyName(participant);
    var sessionInfo = null;
 

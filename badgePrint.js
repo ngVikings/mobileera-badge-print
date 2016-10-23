@@ -16,13 +16,24 @@ function printParticipant(doc, participant) {
    var margin = 10;
    doc.font('fonts/Roboto/Roboto-Bold.ttf')
       .fontSize(36)
-      .fillColor("#0E1131")
+      .fillColor("#0E1131");
+   if (doc.widthOfString(participant.fullName) > width) {
+      doc.fontSize(30);
+      if (doc.widthOfString(participant.fullName) > width) {
+         console.log(participant.fullName, doc.widthOfString(participant.fullName));
+      }
+   }
+
+   doc
       .text(participant.fullName, margin, 180, {align: "center", height, width});
    if (participant.company) {
       doc.font('fonts/Roboto/Roboto-Regular.ttf')
          .fontSize(18)
-         .fillColor("#0E1131")
-         .text(participant.company, {align: "center", height, width});         
+         .fillColor("#0E1131");
+      if (doc.widthOfString(participant.company) > width) {
+         console.log(participant.company, doc.widthOfString(participant.company));
+      }
+      doc.text(participant.company, {align: "center", height, width});         
    }
    var sessionInfo = participant.sessionInfo;
    if (sessionInfo) {
@@ -30,8 +41,13 @@ function printParticipant(doc, participant) {
       var sessionTime = sessionInfo.date + ", " + sessionInfo.timeslot +  ", " + sessionInfo.track;
       doc.font('fonts/Roboto/Roboto-Medium.ttf')
          .fontSize(14)
-         .fillColor("#0E1131")
-         .text(sessionInfo.title, {align: "center", height, width});
+         .fillColor("#0E1131");
+      if (doc.widthOfString(sessionInfo.title) > width) {
+         console.log(sessionInfo.title, doc.widthOfString(sessionInfo.title));
+         doc.text(sessionInfo.title.substring(0, 35) + "...", {align: "center", height, width});
+      } else {
+         doc.text(sessionInfo.title, {align: "center", height, width});
+      }
       doc.fontSize(12)
          .fillColor("#6D6E6F")
          .text(sessionTime, {align: "center", height, width});
