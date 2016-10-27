@@ -106,7 +106,7 @@ function createParticipant(participant, speakers, schedules, sessions) {
       categoryName = "Organizer";
    } else if (ticketName === "Volunteer") {
       categoryName = "Volunteer";
-   } else if (ticketName === "Mobile Era Speaker") {
+   } else if (ticketName === "Mobile Era Speaker" || ticketName === "Mobile Era Lightning Speaker") {
       categoryName = 'Speaker';
       sessionInfo = speakerInfo(participant, speakers, schedules, sessions);
       if (!sessionInfo) {
