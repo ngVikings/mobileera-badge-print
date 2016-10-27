@@ -66,11 +66,18 @@ var COMPANIES = {
    "@shortcut.no": "Shortcut",
    "@programutvikling.no": "Programutvikling",
    "@computas.no": "Computas",
+
+   // Long names
+   '@norconsult.no': 'Norconsult'
 }
 
 var COMPANY_SPECIAL_CASES = {
    "johannes@brodwall.com": "Sopra Steria",
-   "bmorkan@gmail.com": "Redhat"
+   "bmorkan@gmail.com": "Redhat",
+
+   // Long names
+   'tso@nois.no': 'Norconsult',
+   'linnkristin@gmail.com': 'Norconsult',
 }
 
 
