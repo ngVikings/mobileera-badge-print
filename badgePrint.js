@@ -20,6 +20,7 @@ function printParticipant(doc, participant, side) {
    if (doc.widthOfString(participant.fullName) > width) {
       doc.fontSize(30);
       if (doc.widthOfString(participant.fullName) > width) {
+         doc.fontSize(26);
          console.log(participant.fullName, doc.widthOfString(participant.fullName));
       }
    }
@@ -44,10 +45,9 @@ function printParticipant(doc, participant, side) {
          .fillColor("#0E1131");
       if (doc.widthOfString(sessionInfo.title) > width) {
          console.log(sessionInfo.title, doc.widthOfString(sessionInfo.title));
-         doc.text(sessionInfo.title.substring(0, 35) + "...", {align: "center", height, width});
-      } else {
-         doc.text(sessionInfo.title, {align: "center", height, width});
+         doc.fontSize(10);
       }
+      doc.text(sessionInfo.title, {align: "center", height, width});
       doc.fontSize(12)
          .fillColor("#6D6E6F")
          .text(sessionTime, {align: "center", height, width});
