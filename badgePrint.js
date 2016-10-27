@@ -1,11 +1,11 @@
 var fs = require('fs')
 
-function printParticipant(doc, participant) {
+function printParticipant(doc, participant, side) {
    doc.addPage();
    var height = doc.page.height;
    doc.image(participant.image, 0, 0, {height, width:doc.page.width});
 
-   if (!participant.sessionInfo) {
+   if (!participant.sessionInfo || side === "back") {
       var qrWidth = 40;
       doc.image(
          qr.imageSync(participant.contactCard, {type: 'png'}), 
@@ -36,7 +36,7 @@ function printParticipant(doc, participant) {
       doc.text(participant.company, {align: "center", height, width});         
    }
    var sessionInfo = participant.sessionInfo;
-   if (sessionInfo) {
+   if (sessionInfo && side === "front") {
       doc.moveDown();
       var sessionTime = sessionInfo.date + ", " + sessionInfo.timeslot +  ", " + sessionInfo.track;
       doc.font('fonts/Roboto/Roboto-Medium.ttf')
@@ -70,9 +70,9 @@ function badgePrint(participants) {
 
 
    for (var participant of participants) {
-      printParticipant(doc, participant);
+      printParticipant(doc, participant, "front");
       // Back page
-      printParticipant(doc, participant);
+      printParticipant(doc, participant, "back");
    }
 
    // Finalize PDF file
