@@ -59,13 +59,13 @@ function printParticipant(doc, participant, side) {
 var PDFDocument = require('pdfkit');
 var qr = require('qr-image')
 
-function badgePrint(participants) {
+function badgePrint(participants, filename) {
    // Create a document
    doc = new PDFDocument({
       size: 'A6',
       autoFirstPage: false
    });
-   doc.pipe(fs.createWriteStream('badges.pdf'));
+   doc.pipe(fs.createWriteStream(filename));
 
 
 
@@ -79,4 +79,24 @@ function badgePrint(participants) {
    doc.end();   
 }
 
-module.exports = badgePrint;
+function blankBadgePrint(count, filename) {
+   doc = new PDFDocument({
+      size: 'A6',
+      autoFirstPage: false
+   });
+   doc.pipe(fs.createWriteStream(filename));
+
+   var image = 'images/badge-attendee.png';
+
+   for (var i=0; i<count; i++) {
+      doc.addPage();
+      var height = doc.page.height;
+      doc.image(image, 0, 0, {height, width:doc.page.width});
+      doc.addPage();
+      doc.image(image, 0, 0, {height, width:doc.page.width});
+   }
+
+   doc.end();      
+}
+
+module.exports = {badgePrint, blankBadgePrint};

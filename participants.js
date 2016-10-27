@@ -62,9 +62,18 @@ var COMPANIES = {
    "@webstep.no": "Webstep"
 }
 
+var COMPANY_SPECIAL_CASES = {
+   "johannes@brodwall.com": "Sopra Steria"
+}
+
+
 function companyName(participant) {
    var email = participant["Epost"];
    var domain = email.replace(/.*@/, "@");
+
+   if (COMPANY_SPECIAL_CASES[email]) {
+      return COMPANY_SPECIAL_CASES[email];
+   }
 
    if (COMPANIES[domain]) {
       return COMPANIES[domain];
