@@ -129,6 +129,9 @@ function participants(filename) {
    return participantsRaw.map(function(participant) {
       return createParticipant(participant, speakers, schedules, sessions);
    }).sort(function(a, b) {
+      if (a.categoryName.localeCompare(b.categoryName) != 0) {
+         return a.categoryName.localeCompare(b.categoryName);
+      }
       return a.fullName.localeCompare(b.fullName);
    });
 }
