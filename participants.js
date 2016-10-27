@@ -59,11 +59,18 @@ var COMPANIES = {
    "@mesan.no": "Mesan", 
    "@systek.no": "Systek",
    "@apps.no": "Apps",
-   "@webstep.no": "Webstep"
+   "@webstep.no": "Webstep",
+   "@samsung.com": "Samsung",
+   "@partner.samsung.com": "Samsung",
+   "@hoopla.no": "Hoopla",
+   "@shortcut.no": "Shortcut",
+   "@programutvikling.no": "Programutvikling",
+   "@computas.no": "Computas",
 }
 
 var COMPANY_SPECIAL_CASES = {
-   "johannes@brodwall.com": "Sopra Steria"
+   "johannes@brodwall.com": "Sopra Steria",
+   "bmorkan@gmail.com": "Redhat"
 }
 
 
@@ -118,7 +125,7 @@ function createParticipant(participant, speakers, schedules, sessions) {
 
    var email = participant["Epost"];
 
-   if (!company) {
+   if (!company && email.indexOf("@gmail.com") == -1) {
       console.log("Could not find company name for", email, categoryName);
    }
 
@@ -131,12 +138,14 @@ function createParticipant(participant, speakers, schedules, sessions) {
 }
 
 
-function participants(filename) {
+function participants(filename, filterOnType) {
    var workbook = XLSX.readFile(filename);
    var worksheet = workbook.Sheets[workbook.SheetNames[0]]; 
    var participantsRaw = XLSX.utils.sheet_to_json(worksheet);
    return participantsRaw.map(function(participant) {
       return createParticipant(participant, speakers, schedules, sessions);
+   }).filter(function(p) {
+      return !filterOnType || filterOnType === p.categoryName;
    }).sort(function(a, b) {
       if (a.categoryName.localeCompare(b.categoryName) != 0) {
          return a.categoryName.localeCompare(b.categoryName);
