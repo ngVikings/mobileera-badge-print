@@ -6,10 +6,10 @@ var sessions = yaml.readSync('data/sessions-data.yml');
 var XLSX = require('xlsx');
 
 
-function speakerInfo(participant, speakers, schedules, sessions) {
+function speakerInfo(fullName, speakers, schedules, sessions) {
    var speakerObj = null;
    for (var speaker of speakers) {
-      if (speaker.name === participant['Fornavn'] && speaker.surname === participant['Etternavn']) {
+      if (speaker.name + " " + speaker.surname === fullName) {
          speakerObj = speaker;
       }
    }
@@ -65,18 +65,28 @@ var COMPANIES = {
    "@hoopla.no": "Hoopla",
    "@shortcut.no": "Shortcut",
    "@programutvikling.no": "Programutvikling",
-   "@computas.no": "Computas",
+   "@computas.com": "Computas",
 
    // Long names
-   '@norconsult.no': 'Norconsult'
+   '@norconsult.no': 'Norconsult',
+   '@nois.no': 'Norconsult',
+   '@evry.com': 'EVRY',
 }
 
 var COMPANY_SPECIAL_CASES = {
    "johannes@brodwall.com": "Sopra Steria",
-   "bmorkan@gmail.com": "Redhat",
+   'hampus.nilsson@mobileera.rocks': "Computas",
+   'oivind.jorfald@outlook.com': "Sopra Steria",
+   'kjell.g@gmail.com': "Sopra Steria",
+   'loginov.k@gmail.com': "NorApps",
+   'salnikov@gmail.com': 'ForgeRock',
+   'katrineorlova@gmail.com': 'Accenture',
+   'anum.qudsia@gmail.com': 'FireTech',
+
+
+   'oddbjorn.bakke@gmail.com': 'Sopra Steria',
 
    // Long names
-   'tso@nois.no': 'Norconsult',
    'linnkristin@gmail.com': 'Norconsult',
 }
 
@@ -108,9 +118,18 @@ var IMAGES = {
    'Organizer': 'images/badge-organizer.png'
 }
 
+function capitalize(word) {
+   return word[0].toUpperCase() + word.substring(1);
+}
+
 
 function createParticipant(participant, speakers, schedules, sessions) {
-   var fullName = (participant['Fornavn'] + " " + participant["Etternavn"]).replace("  ", " ");
+   var fullName = (capitalize(participant['Fornavn']) + " " + capitalize(participant["Etternavn"])).replace("  ", " ");
+
+   if (fullName === "István Szmozsánszky") {
+      fullName = "István 'Flaki' Szmozsánszky"
+   }
+
    var company = companyName(participant);
    var sessionInfo = null;
 
@@ -122,7 +141,7 @@ function createParticipant(participant, speakers, schedules, sessions) {
       categoryName = "Volunteer";
    } else if (ticketName === "Mobile Era Speaker" || ticketName === "Mobile Era Lightning Speaker") {
       categoryName = 'Speaker';
-      sessionInfo = speakerInfo(participant, speakers, schedules, sessions);
+      sessionInfo = speakerInfo(fullName, speakers, schedules, sessions);
       if (!sessionInfo) {
          console.log("Unknown speaker " + fullName);
       } else {
@@ -132,7 +151,7 @@ function createParticipant(participant, speakers, schedules, sessions) {
 
    var email = participant["Epost"];
 
-   if (!company && email.indexOf("@gmail.com") == -1) {
+   if (!company && email.indexOf("@gmailz.com") == -1) {
       console.log("Could not find company name for", email, categoryName);
    }
 
