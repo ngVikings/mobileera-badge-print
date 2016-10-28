@@ -66,6 +66,7 @@ var COMPANIES = {
    "@shortcut.no": "Shortcut",
    "@programutvikling.no": "Programutvikling",
    "@computas.com": "Computas",
+   "@redhat.com": "Red Hat",
 
    // Long names
    '@norconsult.no': 'Norconsult',
