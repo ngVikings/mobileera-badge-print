@@ -1,3 +1,4 @@
 *.xls
+*.xlsx
 node_modules
 *.pdf
