@@ -9,13 +9,9 @@ function printParticipant(doc, participant, side) {
     var width = doc.page.width - 20;
     var margin = 10;
 
-    console.log(participant.fullName)
-
     var sessionInfo = participant.sessionInfo;
 
     if (sessionInfo && side === "back") {
-
-        console.log(sessionInfo)
 
         sessionInfo = sessionInfo.match(/[^\r\n]+/g);
 
@@ -117,6 +113,9 @@ var PDFDocument = require('pdfkit');
 var qr = require('qr-image')
 
 function badgePrint(participants, filename) {
+
+    console.log('Started creating ' + filename + '...');
+
     // Create a document
     doc = new PDFDocument({
         size: 'A6',
@@ -133,9 +132,14 @@ function badgePrint(participants, filename) {
 
     // Finalize PDF file
     doc.end();
+
+    console.log('Finished creating ' + filename);
 }
 
 function blankBadgePrint(count, filename) {
+
+    console.log('Started creating ' + filename + '...');
+
     doc = new PDFDocument({
         size: 'A6',
         autoFirstPage: false
@@ -159,6 +163,9 @@ function blankBadgePrint(count, filename) {
     }
 
     doc.end();
+
+    console.log('Finished creating ' + filename);
+
 }
 
 module.exports = {
