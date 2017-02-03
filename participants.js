@@ -41,7 +41,8 @@ var DIET_STOP_LIST = [
     "Meat",
     "Nope.",
     "I love meat.",
-    "Sushi!"
+    "Sushi!",
+    "banana"
 ]
 
 var STATS = {
@@ -105,15 +106,15 @@ var STATS = {
                 'total': 0,
                 'number': 0
             },
-            'Workshop Day (Feb 12th): Migrating Applications from Angular 1 to Angular 2 - FREE WORKSHOP! Use 100% discount code - See details below:': {
+            'Workshop Day (Feb 12th): Migrating Applications from Angular 1 to Angular 2': {
                 'total': 0,
                 'number': 0
             },
-            'Workshop Day (Feb 12th): Ionic 2 with Firebase - FREE WORKSHOP! Use 100% discount code - See details below:': {
+            'Workshop Day (Feb 12th): Ionic 2 with Firebase': {
                 'total': 0,
                 'number': 0
             },
-            'Workshop Day (Feb 12th): ng-girls FREE WORKSHOP!': {
+            'Workshop Day (Feb 12th): ngGirls @ ngVikings': {
                 'total': 0,
                 'number': 0
             },
@@ -140,7 +141,8 @@ var STATS = {
             'L': 0,
             'XL': 0,
             'XXL': 0,
-            '-': 0
+            '-': 0,
+            'number': 0
         },
         'organizers': {
             'XS': 0,
@@ -149,7 +151,8 @@ var STATS = {
             'L': 0,
             'XL': 0,
             'XXL': 0,
-            '-': 0
+            '-': 0,
+            'number': 0
         },
         'speakers': {
             'XS': 0,
@@ -158,7 +161,8 @@ var STATS = {
             'L': 0,
             'XL': 0,
             'XXL': 0,
-            '-': 0
+            '-': 0,
+            'number': 0
         },
         'volunteers': {
             'XS': 0,
@@ -167,7 +171,28 @@ var STATS = {
             'L': 0,
             'XL': 0,
             'XXL': 0,
-            '-': 0
+            '-': 0,
+            'number': 0
+        },
+        'black': {
+            'XS': 0,
+            'S': 0,
+            'M': 0,
+            'L': 0,
+            'XL': 0,
+            'XXL': 0,
+            '-': 0,
+            'number': 0
+        },
+        'white': {
+            'XS': 0,
+            'S': 0,
+            'M': 0,
+            'L': 0,
+            'XL': 0,
+            'XXL': 0,
+            '-': 0,
+            'number': 0
         },
         'number': 0
     },
@@ -182,7 +207,10 @@ var FREE_WORKSHOPS = {
 
 function createParticipant(participant) {
 
-    var fullName = participant['Ticket First Name'].trim() + " " + participant["Ticket Last Name"].trim();
+    var firstName = participant['Ticket First Name'] || '';
+    var lastName = participant['Ticket Last Name'] || '';
+
+    var fullName = firstName.trim() + " " + lastName.trim();
 
     var company = participant['Ticket Company Name'];
     var sessionInfo = null;
@@ -257,7 +285,11 @@ function createParticipant(participant) {
         }
 
         STATS.tshirts.attendees[tShirt]++;
+        STATS.tshirts.attendees.number++;
         STATS.tshirts.number++;
+
+        STATS.tshirts.black[tShirt]++;
+        STATS.tshirts.black.number++;
 
         if (diet) {
             STATS.conf.diet.list.push(diet)
@@ -307,7 +339,11 @@ function createParticipant(participant) {
         STATS.workshops.people.number++;
 
         STATS.tshirts.organizers[tShirt]++;
+        STATS.tshirts.organizers.number++;
         STATS.tshirts.number++;
+
+        STATS.tshirts.white[tShirt]++;
+        STATS.tshirts.white.number++;
 
         if (diet) {
             STATS.conf.diet.list.push(diet)
@@ -327,7 +363,11 @@ function createParticipant(participant) {
         STATS.workshops.people.number++;
 
         STATS.tshirts.volunteers[tShirt]++;
+        STATS.tshirts.volunteers.number++;
         STATS.tshirts.number++;
+
+        STATS.tshirts.white[tShirt]++;
+        STATS.tshirts.white.number++;
 
         if (diet) {
             STATS.conf.diet.list.push(diet)
@@ -348,7 +388,11 @@ function createParticipant(participant) {
         STATS.workshops.people.number++;
 
         STATS.tshirts.speakers[tShirt]++;
+        STATS.tshirts.speakers.number++;
         STATS.tshirts.number++;
+
+        STATS.tshirts.black[tShirt]++;
+        STATS.tshirts.black.number++;
 
         if (diet) {
             STATS.conf.diet.list.push(diet)
@@ -371,7 +415,8 @@ function createParticipant(participant) {
         contactCard,
         sessionInfo,
         image,
-        categoryName
+        categoryName,
+        ticketName
     };
 }
 

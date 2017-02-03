@@ -10,46 +10,91 @@ function printParticipant(doc, participant, side) {
     var margin = 10;
 
     var sessionInfo = participant.sessionInfo;
+    var categoryName = participant.categoryName;
+    var ticketName = participant.ticketName;
 
-    if (sessionInfo && side === "back") {
+    if ((categoryName === 'Speaker' && sessionInfo && side === "back") || (categoryName === 'WorkshopAttendee' && side === "back")) {
 
-        sessionInfo = sessionInfo.match(/[^\r\n]+/g);
+        if (categoryName === 'Speaker') {
 
-        doc.image('images/badge6.png', 0, 0, {
-            height,
-            width: doc.page.width
-        });
+            doc.image('images/badge6.png', 0, 0, {
+                height,
+                width: doc.page.width
+            });
 
+            sessionInfo = sessionInfo.match(/[^\r\n]+/g);
 
-        doc.font('fonts/Oswald/Oswald-Bold.ttf')
-            .fontSize(18)
-            .fillColor("#000000");
-        if (doc.widthOfString(sessionInfo[0]) > width) {
-            doc.fontSize(16);
+            doc.font('fonts/Oswald/Oswald-Bold.ttf')
+                .fontSize(18)
+                .fillColor("#000000");
+            if (doc.widthOfString(sessionInfo[0]) > width) {
+                doc.fontSize(16);
+            }
+            doc.text(sessionInfo[0], margin, 160, {
+                align: "center",
+                height,
+                width
+            });
+
+            doc.font('fonts/Oswald/Oswald-Regular.ttf')
+                .fontSize(12)
+                .fillColor("#2556a6")
+                .text(sessionInfo[1], {
+                    align: "center",
+                    height,
+                    width
+                });
+
+            doc.font('fonts/Oswald/Oswald-Regular.ttf')
+                .fontSize(12)
+                .fillColor("#7a461c")
+                .text('\nOffice Hours: ' + sessionInfo[2], {
+                    align: "center",
+                    height,
+                    width
+                });
+
+        } else {
+
+            doc.image('images/badge5.png', 0, 0, {
+                height,
+                width: doc.page.width
+            });
+
+            workshopName = ticketName.substring(25);
+
+            doc.font('fonts/Oswald/Oswald-Bold.ttf')
+                .fontSize(18)
+                .fillColor("#000000");
+            if (doc.widthOfString(workshopName) > width) {
+                doc.fontSize(16);
+            }
+            doc.text(workshopName, margin, 160, {
+                align: "center",
+                height,
+                width
+            });
+
+            doc.font('fonts/Oswald/Oswald-Regular.ttf')
+                .fontSize(12)
+                .fillColor("#2556a6")
+                .text('February 12th, 10:00-17:00', {
+                    align: "center",
+                    height,
+                    width
+                });
+
+            doc.font('fonts/Oswald/Oswald-Regular.ttf')
+                .fontSize(12)
+                .fillColor("#7a461c")
+                .text('\nLunch: 12:30-13:30', {
+                    align: "center",
+                    height,
+                    width
+                });
+
         }
-        doc.text(sessionInfo[0], margin, 160, {
-            align: "center",
-            height,
-            width
-        });
 
-        doc.font('fonts/Oswald/Oswald-Regular.ttf')
-            .fontSize(12)
-            .fillColor("#2556a6")
-            .text(sessionInfo[1], {
-                align: "center",
-                height,
-                width
-            });
-
-        doc.font('fonts/Oswald/Oswald-Regular.ttf')
-            .fontSize(12)
-            .fillColor("#7a461c")
-            .text('\nOffice Hours: ' + sessionInfo[2], {
-                align: "center",
-                height,
-                width
-            });
 
 
     } else {
@@ -118,7 +163,7 @@ function badgePrint(participants, filename) {
 
     // Create a document
     doc = new PDFDocument({
-        size: 'A6',
+        size: [315, 436],
         autoFirstPage: false
     });
 
@@ -141,7 +186,7 @@ function blankBadgePrint(count, filename) {
     console.log('Started creating ' + filename + '...');
 
     doc = new PDFDocument({
-        size: 'A6',
+        size: [315, 436],
         autoFirstPage: false
     });
     doc.pipe(fs.createWriteStream(filename));
