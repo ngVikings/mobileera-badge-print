@@ -181,7 +181,16 @@ function badgePrint(participants, filename) {
     console.log('Finished creating ' + filename);
 }
 
-function blankBadgePrint(count, filename) {
+function blankBadgePrint(count, filename, category) {
+
+    var IMAGES = {
+        'ConferenceAttendee': 'images/badge.png',
+        'WorkshopAttendee': 'images/badge5.png',
+        'Speaker': 'images/badge2.png',
+        'Volunteer': 'images/badge4.png',
+        'Organizer': 'images/badge3.png',
+        'Sponsorship': 'images/badge.png',
+    }
 
     console.log('Started creating ' + filename + '...');
 
@@ -191,7 +200,7 @@ function blankBadgePrint(count, filename) {
     });
     doc.pipe(fs.createWriteStream(filename));
 
-    var image = 'images/badge.png';
+    var image = IMAGES[category || 'ConferenceAttendee'];
 
     for (var i = 0; i < count; i++) {
         doc.addPage();

@@ -1,5 +1,6 @@
 var XLSX = require('xlsx');
 var _ = require('lodash');
+var moment = require('moment');
 
 var IMAGES = {
     'ConferenceAttendee': 'images/badge.png',
@@ -8,6 +9,16 @@ var IMAGES = {
     'Volunteer': 'images/badge4.png',
     'Organizer': 'images/badge3.png',
     'Sponsorship': 'images/badge.png',
+}
+
+var CERTIFICATES = {
+    'Workshop Day (Feb 12th): Data flow architecture with Redux and Angular 2': 'images/certificate4.png',
+    'Workshop Day (Feb 12th): Angular 2: From Zero To Hero Jr in 1 day!': 'images/certificate5.png',
+    'Workshop Day (Feb 12th): Advanced Angular 2': 'images/certificate.png',
+    'Workshop Day (Feb 12th): Reactive applications with Angular2, Rxjs and @ngrx': 'images/certificate2.png',
+    'Workshop Day (Feb 12th): Migrating Applications from Angular 1 to Angular 2': 'images/certificate6.png',
+    'Workshop Day (Feb 12th): Ionic 2 with Firebase': 'images/certificate3.png',
+    'Workshop Day (Feb 12th): ngGirls @ ngVikings': 'images/certificate7.png'
 }
 
 var DIET_STOP_LIST = [
@@ -42,7 +53,9 @@ var DIET_STOP_LIST = [
     "Nope.",
     "I love meat.",
     "Sushi!",
-    "banana"
+    "banana",
+    "Burger",
+    "all its fine"
 ]
 
 var STATS = {
@@ -196,13 +209,15 @@ var STATS = {
         },
         'number': 0
     },
-    'total': 0
+    'total': 0,
+    'filteredByDate': 0
 }
 
 var FREE_WORKSHOPS = {
     'confTicketOwners': [],
     'workshopTicketOwners': [],
-    'freeCodeOwners': []
+    'freeCodeOwners': [],
+    'ngGirlsWorkshopTicketOwners': []
 }
 
 function createParticipant(participant) {
@@ -234,6 +249,8 @@ function createParticipant(participant) {
     var email = participant["Ticket Email"];
 
     var contactCard = fullName + " <" + email + ">";
+
+    var modifiedDate = moment(participant["Ticket Last Updated Date"], "MM/DD/YY"); //Last Updated | Created
 
     if (company) {
         contactCard += " of " + company;
@@ -272,7 +289,7 @@ function createParticipant(participant) {
             STATS.conf.tickets[confType].number++;
             STATS.conf.tickets[confType].total += ticketPrice
 
-            console.log('Discounted ticket with code: ' + participant['Order Discount Code'] + ' and price ' + ticketPrice + ' ref: ' + participant['Ticket Reference']);
+            //console.log('Discounted ticket with code: ' + participant['Order Discount Code'] + ' and price ' + ticketPrice + ' ref: ' + participant['Ticket Reference']);
 
         } else {
 
@@ -280,7 +297,7 @@ function createParticipant(participant) {
             STATS.conf.tickets[confType].number++;
             STATS.conf.tickets[confType].total += ticketPrice
 
-            console.log('Discounted ticket with code: ' + participant['Order Discount Code'] + ' and price ' + ticketPrice + ' ref: ' + participant['Ticket Reference']);
+            //console.log('Discounted ticket with code: ' + participant['Order Discount Code'] + ' and price ' + ticketPrice + ' ref: ' + participant['Ticket Reference']);
 
         }
 
@@ -305,6 +322,7 @@ function createParticipant(participant) {
     } else if (ticketName.includes('Workshop Day (Feb 12th)')) {
 
         categoryName = "WorkshopAttendee";
+        var certImage = CERTIFICATES[ticketName];
 
         STATS.workshops.tickets.number++;
         STATS.workshops.tickets.total += ticketPrice
@@ -324,6 +342,10 @@ function createParticipant(participant) {
 
         if (discount === 'yesIHaveMyConferenceTicket') {
             FREE_WORKSHOPS.freeCodeOwners.push(email)
+        }
+
+        if (ticketName === 'Workshop Day (Feb 12th): ngGirls @ ngVikings') {
+            FREE_WORKSHOPS.ngGirlsWorkshopTicketOwners.push(email)
         }
 
         FREE_WORKSHOPS.workshopTicketOwners.push(email)
@@ -416,12 +438,14 @@ function createParticipant(participant) {
         sessionInfo,
         image,
         categoryName,
-        ticketName
+        ticketName,
+        modifiedDate,
+        certImage
     };
 }
 
 
-function participants(filename, filterOnType) {
+function participants(filename, filterOnType, startingDate) {
     var workbook = XLSX.readFile(filename);
     var worksheet = workbook.Sheets[workbook.SheetNames[0]];
     var participantsRaw = XLSX.utils.sheet_to_json(worksheet);
@@ -431,6 +455,18 @@ function participants(filename, filterOnType) {
         return p.categoryName;
     }).filter(function(p) {
         return !filterOnType || filterOnType === p.categoryName;
+    }).filter(function(p) {
+        if(startingDate) {
+            if(p.modifiedDate.isSameOrAfter(startingDate)) {
+                console.log('Modified date: ' + p.modifiedDate.format())
+                STATS.filteredByDate++
+                return true
+            } else {
+                return true //hack
+            }
+        } else {
+            return true
+        }
     }).sort(function(a, b) {
         if (a.categoryName.localeCompare(b.categoryName) != 0) {
             return a.categoryName.localeCompare(b.categoryName);
@@ -438,14 +474,21 @@ function participants(filename, filterOnType) {
         return a.fullName.localeCompare(b.fullName);
     });
 
-    console.log(JSON.stringify(STATS, undefined, 2));
+    //Manual correction for wrong non-zero sum in manual orders YOWM-1, Q6BD-1, GF1V-1
+    STATS.conf.tickets.total -= 2500
+    STATS.workshops.tickets.total -= 2500
+    STATS.total -= 5000
 
-    console.log('Wrong free workshop attendees:');
-    console.log(JSON.stringify(_.difference(FREE_WORKSHOPS.freeCodeOwners, FREE_WORKSHOPS.confTicketOwners), undefined, 2));
-
-    console.log('ONLY workshop attendees:');
-    console.log(JSON.stringify(_.difference(FREE_WORKSHOPS.workshopTicketOwners, FREE_WORKSHOPS.confTicketOwners), undefined, 2));
-
+    // console.log(JSON.stringify(STATS, undefined, 2));
+    //
+    // console.log('Wrong free workshop attendees:');
+    // console.log(JSON.stringify(_.difference(FREE_WORKSHOPS.freeCodeOwners, FREE_WORKSHOPS.confTicketOwners), undefined, 2));
+    //
+    // console.log('ONLY workshop attendees (except ngGirls):');
+    // console.log(JSON.stringify(_.difference(_.difference(FREE_WORKSHOPS.workshopTicketOwners, FREE_WORKSHOPS.confTicketOwners),FREE_WORKSHOPS.ngGirlsWorkshopTicketOwners), undefined, 2));
+    //
+    // console.log('ngGirls AND conference attendees:');
+    // console.log(JSON.stringify(_.intersection(FREE_WORKSHOPS.confTicketOwners, FREE_WORKSHOPS.ngGirlsWorkshopTicketOwners), undefined, 2));
 
     return participantsProcessed;
 }
